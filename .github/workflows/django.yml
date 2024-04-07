@@ -25,7 +25,9 @@ jobs:
       run: |
         cd favlinks
         python -m pip install --upgrade pip pipenv
+        pipenv --python=python3
         pipenv install
+        pipenv graph
     - name: Run Tests
       run: |
         cd favlinks
