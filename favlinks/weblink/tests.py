@@ -38,18 +38,18 @@ class UserAccountTestCase(TestCase):
             user001 = User.objects.get(first_name="John")
         
         c = Client()
-        response = c.get('/accounts/login')
-        self.assertEqual(response.status_code, 200, 'Login page should be available.')
-    
-        response = c.get('/accounts/signup')
+        response = c.get('/signup/')
         self.assertEqual(response.status_code, 200, 'Signup page should be available.')
+
+        response = c.get('/accounts/login/')
+        self.assertEqual(response.status_code, 200, 'Login page should be available.')    
     
     def test_user_signin_signout(self):
         """create user, signin, signout."""
         user003 = User.objects.create_user("test1","test1@example.com","simplePassword")
         c = Client()
         response = c.get('/')
-        self.assertEqual(response.status_code, 200, 'Landing page should be available.')
+        self.assertEqual(response.status_code, 302, 'Landing page should be available. But if the user is not logged-in it redirects to the login form.')
         
 
     def tearDown(self) -> None:
