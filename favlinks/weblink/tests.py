@@ -1,8 +1,60 @@
 from io import StringIO
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.contrib.auth.models import User, Group
 from weblink.models import URL, Category, Tag, Link
+
+from django.contrib.auth import authenticate, login, alogin, logout
+
+class UserAccountTestCase(TestCase):
+    """
+    - username/email must be unique
+    - password cannot be weak password
+    - user signup via web form
+    - user signup via API
+    - user login via web form
+    - user login via API
+    """
+    def setUp(self):
+        user001 = User.objects.create_user(  username="johnw",
+                                        email="john.wick@example.com",
+                                        password="changeme",
+                                        first_name="John",
+                                        last_name="Wick")
+        username = "john"
+        first_name = "John"
+        last_name = "Doe"
+        email = "john.doe@example.com"
+        user002 = User.objects.create(  username=username, 
+                                        email=email, 
+                                        first_name=first_name, 
+                                        last_name=last_name  )
+    
+    def test_account_signup_(self):
+        with self.assertRaises(User.DoesNotExist):
+            user001 = User.objects.get(username="alice")
+        
+        with self.assertRaises(User.MultipleObjectsReturned):
+            user001 = User.objects.get(first_name="John")
+        
+        c = Client()
+        response = c.get('/accounts/login')
+        self.assertEqual(response.status_code, 200, 'Login page should be available.')
+    
+        response = c.get('/accounts/signup')
+        self.assertEqual(response.status_code, 200, 'Signup page should be available.')
+    
+    def test_user_signin_signout(self):
+        """create user, signin, signout."""
+        user003 = User.objects.create_user("test1","test1@example.com","simplePassword")
+        c = Client()
+        response = c.get('/')
+        self.assertEqual(response.status_code, 200, 'Landing page should be available.')
+        
+
+    def tearDown(self) -> None:
+        return super().tearDown()
+
 
 class ApplicationModelClassesTest(TestCase):
     def test_user_model(self):
@@ -10,6 +62,7 @@ class ApplicationModelClassesTest(TestCase):
         u = User.objects.create(username='user-1')
         self.assertEquals(g.id, 1)
         self.assertEquals(u.id, 1)
+
     def test_weblink_models(self):
         """
         This test cases examine URL object and relationships: 
