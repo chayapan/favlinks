@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.models import User
+from django.contrib.auth import views as auth_views
 from rest_framework import routers
 from weblink import views 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -29,7 +30,11 @@ router.register(r'links', views.LinkViewSet)
 
 
 urlpatterns = [
+    path('', views.home, name="home"),
+    path('signup/', views.signup, name="signup"),
     path('accounts/', include('django.contrib.auth.urls')),
+    # path("accounts/login/", auth_views.LoginView.as_view(template_name="registration/login.html"), name="login"),
+    path('change-password/', auth_views.PasswordChangeView.as_view(), name="password_reset"),
     path('api/v1/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
     path("admin/", admin.site.urls),

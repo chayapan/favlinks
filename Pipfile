@@ -11,6 +11,7 @@ requests = "*"
 djangorestframework = "*"
 markdown = "*"
 django-filter = "*"
+djlint = "*"
 
 [dev-packages]
 

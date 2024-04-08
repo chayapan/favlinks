@@ -1,9 +1,24 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import Group, User
+from django.contrib.auth import forms as auth_forms
 from rest_framework import permissions, viewsets
 from weblink import serializers
 
-# ViewSets define the view behavior.
+def signup(request):
+    signup_form = auth_forms.UserCreationForm()
+    context = {
+        'form': signup_form,
+        'login_form': auth_forms.AuthenticationForm()
+    }
+    return render(request, template_name="registration/signup.html", context=context)
+
+def home(request):
+    if not request.user.is_authenticated:
+        return redirect('signup')
+    context = {}
+    return render(request, template_name="home.html", context=context)
+
+# ViewSets define the view behavior for REST framework.
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = serializers.Category.objects.all()
     serializer_class = serializers.CategorySerializer
