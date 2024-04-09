@@ -6,12 +6,14 @@ from weblink.models import Category, Tag, Link, URL
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'favorite_links']
+        fields = ['username', 'email', 'favorite_links']
+        lookup_field = 'username'
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
         fields = ['url', 'name']
+        lookup_field = 'name'
 
 class LinkSerializer(serializers.HyperlinkedModelSerializer):
     options = serializers.HyperlinkedRelatedField(
@@ -36,7 +38,8 @@ class URLSerializer(serializers.HyperlinkedModelSerializer):
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Category
-        fields = ['id', 'name', 'url', 'links']
+        fields = ['id', 'name', 'links']
+        lookup_field = 'name'
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

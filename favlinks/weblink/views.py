@@ -55,6 +55,7 @@ def manage_favorite_url(request):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = serializers.Category.objects.all()
     serializer_class = serializers.CategorySerializer
+    lookup_field = 'name'
 
 class TagViewSet(viewsets.ModelViewSet):
     queryset = serializers.Tag.objects.all()
@@ -75,6 +76,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = serializers.UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'username'
 
 class GroupViewSet(viewsets.ModelViewSet):
     """

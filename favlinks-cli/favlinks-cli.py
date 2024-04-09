@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-
+import shelve
 import argparse
 from getpass import getpass
 import requests
 import os, sys, json
 PROG = 'FavLinks'
 AUTH_ENDPOINT = 'http://127.0.0.1:8000/api-token-auth/'
+LIST_ENDPOINT = 'http://127.0.0.1:8000/api/v1/users'
 
 def show_info(args):
-    if 'FAVLINKS' in os.environ:
-        data = json.loads(os.environ['FAVLINKS'])
-        print(data)
-    else:
-        print("Not logged-in. Please login with 'login' first.")
+    with shelve.open('favlinks.session') as session:
+        if 'token' in session:
+            print(session['username'])
+        else:
+            print("Not logged-in. Please login with 'login' first.")
 
 def register(args):
     """Register a new account."""
@@ -20,32 +21,46 @@ def register(args):
 
 def logout(args) -> bool:
     """Logout. If not logged-in, print that user is not logged-in and return."""
-    if not 'FAVLINKS' in os.environ:
-        print("User not logged-in.")
-    else:
-        print("Logging out....")
+    with shelve.open('favlinks.session') as session:
+        if 'token' in session:
+            print(f"Logging out... {session['username']}")
+            print(f"{session['token']}")
+            del(session['token'])
+        else:
+            print("Not logged-in.")
+            return False
 
 def login(args) -> bool:
     """Login to the service. Checks the 'FAVLINKS' in environment.
     Test:    
     curl -vv -X POST -H "Content-Type: application/json" -d '{"username":"value1", "password":"value2"}' http://127.0.0.1:8000/api-token-auth/
+    Example:
+    ./favlinks-cli.py login --username test1 --password makePass3
     """
-    if 'FAVLINKS' in os.environ:
-        print(os.environ['FAVLINKS'])
-        return True
+    with shelve.open('favlinks.session') as session:
+        if 'token' in session:
+            print("Already logged-in. User: " + session['username'])
+            return True
     username = args.username
     if not args.username:
         username = input("username: ")
     password = args.password
     if not args.password:
         password = getpass("password: ")
-    data = json.dumps({'username': 'user', 'password': 'pass'})
+    data = json.dumps({'username': username, 'password': password})
     headers = {'Content-Type': 'application/json'}
     r = requests.post(AUTH_ENDPOINT,data=data,headers=headers)
-    print(r)
-    print(r.content)
-    os.environ['FAVLINKS'] = json.dumps({'username': username})
-    
+    content = r.content
+    print(content)
+    res = json.loads(content.decode('utf-8'))
+    if r.status_code == 200:
+        with shelve.open('favlinks.session') as session:
+            session['username'] =  username
+            session['token'] = res['token']
+        print("OK.")
+        return True
+    print("Error.")
+    return False
 
 def list_urls(args):
     """List my favorite URLs"""
