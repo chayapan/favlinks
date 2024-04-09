@@ -33,9 +33,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         cmd = options["subcommand"]
         self.stdout.write(
-            self.style.SUCCESS('Manage User Accounts\n%s:' % cmd)
+            self.style.SUCCESS('Manage User Accounts: %s\n' % cmd)
         )
-        if 'new-account' == cmd:
+        if 'new' == cmd:
             self.stdout.write("Creating new account")
             email, username = options['email'], options.get('username', '-')
             try:
@@ -45,16 +45,16 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR(str(e) + "\nemail=%s, username=%s" % (email, username)))
         elif 'delete' == cmd:
             self.stdout.write("Deleting user account(s)")
-            email, username = options['email'], options.get('username', '-')
+            username = options.get('username', None)
             try:
-                q = User.objects.filter(email=email)
+                q = User.objects.filter(username=username)
                 if q.count() == 0:
-                    raise CommandError('User with email "%s" does not exist' % email)
+                    raise CommandError('User with username "%s" does not exist' % (username, ))
                 for u in q:
-                    self.stdout.write("%02d" % u.pk + " "*6 + "%20s" % u.email)
+                    self.stdout.write("%02d" % u.pk + " "*6 + "%20s" % u.username + "... DELETED")
                     u.delete()
             except Exception as e:
-                self.stdout.write(self.style.ERROR(str(e) + "\nemail=%s, username=%s" % (email, username)))
+                self.stdout.write(self.style.ERROR(str(e) + "\nusername=%s" % (username,)))
         elif 'list' == cmd:
             self.stdout.write("Listing all accounts")
             self.stdout.write("=PK=" + "\t=EMAIL=\t" + "\t=USERNAME=")

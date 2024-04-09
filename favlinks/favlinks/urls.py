@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.contrib.auth.models import User
 from django.contrib.auth import views as auth_views
 from rest_framework import routers
+from rest_framework.authtoken import views as drf_views
 from weblink import views 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
@@ -38,6 +39,7 @@ urlpatterns = [
     # path("accounts/login/", auth_views.LoginView.as_view(template_name="registration/login.html"), name="login"),
     path('change-password/', auth_views.PasswordChangeView.as_view(), name="password_reset"),
     path('api/v1/', include(router.urls)),
+    path('api-token-auth/', drf_views.obtain_auth_token),
     path('api-auth/', include('rest_framework.urls')),
     path("admin/", admin.site.urls),
 ]
