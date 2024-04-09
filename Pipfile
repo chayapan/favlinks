@@ -12,6 +12,7 @@ djangorestframework = "*"
 markdown = "*"
 django-filter = "*"
 djlint = "*"
+pandas = "*"
 
 [dev-packages]
 
