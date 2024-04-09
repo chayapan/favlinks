@@ -1,16 +1,15 @@
 """
 Admin command for account registration and management.
 
-
 Command: 
     register
 Sub-command:
     new-account
     list-all
 
-See BaseCommand docs
+See 
+BaseCommand docs
 https://docs.djangoproject.com/en/5.0/howto/custom-management-commands/#ref-basecommand-subclasses
-
 ArgParser
 https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser
 
@@ -27,12 +26,12 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         """Arguments for this command: --delete"""
-        parser.add_argument("subcommand", type=str, choices=['list-all', 'new-account', 'delete-account'])
+        parser.add_argument("subcommand", type=str, choices=['list', 'new', 'delete'])
         parser.add_argument("--email", help="email")
         parser.add_argument("--username", help="username")
 
     def handle(self, *args, **options):
-        cmd = options["subcommand"][0]
+        cmd = options["subcommand"]
         self.stdout.write(
             self.style.SUCCESS('Manage User Accounts\n%s:' % cmd)
         )
@@ -44,7 +43,7 @@ class Command(BaseCommand):
                 self.stdout.write("%02d" % u.pk + " "*6 + "%20s" % u.email)
             except Exception as e:
                 self.stdout.write(self.style.ERROR(str(e) + "\nemail=%s, username=%s" % (email, username)))
-        elif 'delete-account' == cmd:
+        elif 'delete' == cmd:
             self.stdout.write("Deleting user account(s)")
             email, username = options['email'], options.get('username', '-')
             try:
@@ -56,8 +55,9 @@ class Command(BaseCommand):
                     u.delete()
             except Exception as e:
                 self.stdout.write(self.style.ERROR(str(e) + "\nemail=%s, username=%s" % (email, username)))
-        elif 'list-all' == cmd:
+        elif 'list' == cmd:
             self.stdout.write("Listing all accounts")
+            self.stdout.write("=PK=" + "\t=EMAIL=\t" + "\t=USERNAME=")
             for u in User.objects.all():
-                self.stdout.write("%02d" % u.pk + " "*6 + "%20s" % u.email)
+                self.stdout.write(" %03d" % u.pk + "\t%20s" % u.email + "\t%10s" % u.username)
 

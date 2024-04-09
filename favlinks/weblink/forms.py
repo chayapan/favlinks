@@ -20,7 +20,7 @@ class FavoriteLinkForm(ModelForm):
         model = Link
         fields = ["url_text", "category"]
     url_text = forms.URLField(widget=forms.URLInput)
-    tag_select = forms.ModelMultipleChoiceField(queryset=tag_q)
+    tag_select = forms.ModelMultipleChoiceField(queryset=tag_q, required=False)
 
 class UpdateLinkForm(ModelForm):
     class Meta:
