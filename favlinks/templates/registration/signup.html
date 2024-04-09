@@ -3,11 +3,23 @@
     <!-- Left Column -->
     <div class="w3-twothird">
         Create New Account
-        {{ form }}
+
+        <form action="{% url 'signup' %}" method="post">
+            {% csrf_token %} 
+        <div class="w3-container">{{ signup_form.as_table }}</div>
+        <input type="submit" value="Sign up" />
+    </form>
+
     </div>
     <!-- Right Column -->
     <div class="w3-third">
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %} 
         Log-in using Existing Account
-        {{ login_form }}
+        <div class="w3-container">
+            {{ login_form.as_table }}
+        </div>
+        <input type="submit" value="Login" />
+        </form>
     </div>
 {% endblock %}

@@ -8,73 +8,56 @@ https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_templates_cafe
 https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_templates_cv&stacked=h
 
 {% endcomment %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>FavLinks</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="FavLinks service">
-  <meta name="author" content="chayapan">
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <!--[if lt IE 9]>
+  <head>
+    <meta charset="utf-8">
+    <title>FavLinks</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="FavLinks service">
+    <meta name="author" content="chayapan">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!--[if lt IE 9]>
   <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
-</head>
-<body class="w3-light-grey">    
-
-<!-- Links (sit on top) -->
-<div class="w3-top">
-    <div class="w3-row w3-padding w3-black">
-      <div class="w3-col s3">
-        <h1>FavLinks
-     </div>
-      <div class="w3-col s3">
-        <a href="#about" class="w3-button w3-block w3-black">ABOUT</a>
+  </head>
+  <body class="w3-light-grey">
+    <!-- Links (sit on top) -->
+    <div class="w3-top">
+      <div class="w3-row w3-padding w3-black">
+        <div class="w3-col s3">
+          <h1>
+            FavLinks
+          </div>
+          <div class="w3-col s3">
+            <a href="{% url 'fav' %}" class="w3-button w3-block w3-black">My Favorites</a>
+          </div>
+          <div class="w3-col s3">
+            <a href="#where" class="w3-button w3-block w3-black">Tags &amp; Categories</a>
+          </div>
+        </div>
       </div>
-      <div class="w3-col s3">
-        <a href="#menu" class="w3-button w3-block w3-black">My Favorites</a>
+      <!-- Page Container -->
+      <div class="w3-content w3-margin-top"
+           style="max-width:1400px;
+                  padding-top: 5em">
+        <!-- The Grid -->
+        <div class="w3-row-padding">
+          {% block content %}{% endblock %}
+          <!-- End Grid -->
+        </div>
+        <!-- End Page Container -->
       </div>
-      <div class="w3-col s3">
-        <a href="#where" class="w3-button w3-block w3-black">Tags &amp; Categories</a>
-      </div>
-    </div>
-  </div>
-
-    <!-- Page Container -->
-    <div class="w3-content w3-margin-top" style="max-width:1400px; padding-top: 5em">
-
-
-  <!-- The Grid -->
-  <div class="w3-row-padding">
-
-
-
-
-    {% block content %}
-
-    {% endblock %}
-
-  <!-- End Grid -->
-</div>
-  <!-- End Page Container -->
-</div>
-
-    <script src="js/scripts.js"></script>
-
-
-
-<footer class="w3-container w3-black w3-center w3-margin-top">
-    <p>
-        <a href="https://th.linkedin.com/in/chayapan-a-khannabha-56a9024"><i class="fa fa-linkedin w3-hover-opacity"></i></a>
-        <a href="https://github.com/chayapan"><i class="fa fa-github w3-hover-opacity"></i></a>
-    
-        Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a>
-        <a href="https://www.djangoproject.com/">Django</a>
-        <a href="https://www.python.org/">Python</a>
-
-    </p>
-  </footer>
-</body>
-</html>
+      <footer class="w3-container w3-black w3-center w3-margin-top">
+        <p>
+          <a href="https://github.com/chayapan/favlinks"><i class="fa fa-github w3-hover-opacity"></i></a>
+          <a href="https://th.linkedin.com/in/chayapan-a-khannabha-56a9024"><i class="fa fa-linkedin w3-hover-opacity"></i></a>
+          Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a>
+          <a href="https://www.djangoproject.com/">Django</a>
+          <a href="https://www.python.org/">Python</a>
+        </p>
+      </footer>
+    </body>
+  </html>

@@ -1,1 +1,56 @@
-Home {{user}}
+{% extends "base.html" %}
+{% block content %}
+    <!-- Left Column -->
+    <div class="w3-twothird">
+        <h1>Hello, <span class="small">{{user}}</span></h1> 
+        Create New Favorite URL
+
+        <form action="{% url 'fav' %}" method="post">
+            {% csrf_token %} 
+            <label for="team_name">Enter name: </label>
+              {{add_link_form}}
+              <input type="submit" value="Add URL" />
+          </form>
+
+        <hr>
+        <h3>Favorite URLs</h3>
+        <table>
+            <tr>
+                <th></th>
+                <th>Category</th>
+                <th>Created/Updated</th>
+                <th>Page Title</th>
+                <th>URL</th>
+                <th>Tags</th>
+            </tr>
+        {% for link in favorite_urls %}
+        <tr>
+            <td>
+                delete, edit
+            </td>
+            <td>{{link.category}}</td>
+            <td>{{link.updated_at}}</td>
+            <td>{{link.title}}</td>
+            <td><a href="#{{link.url_hash}}">{{link.url_text}}</a></td>
+            <td>{{link.tags}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+    <!-- Right Column -->
+    <div class="w3-third">
+        <hr>
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %} 
+              <input type="submit" value="Logout" />
+        </form>
+        Manage My Account
+        <div class="w3-container">
+            <form action="/" method="post">
+                {% csrf_token %}
+            {{user_profile_form}}
+            <input type="submit" value="Update" />
+            </form>
+        </div>
+    </div>
+{% endblock %}

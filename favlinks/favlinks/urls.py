@@ -25,13 +25,15 @@ router = routers.DefaultRouter()
 router.register(r'categories', views.CategoryViewSet)
 router.register(r'tags', views.TagViewSet)
 router.register(r'links', views.LinkViewSet)
-# router.register(r'users', views.UserViewSet)
+router.register(r'users', views.UserViewSet)
+router.register(r'favorited-urls', views.URLViewSet)
 # router.register(r'groups', views.GroupViewSet)
 
 
 urlpatterns = [
     path('', views.home, name="home"),
     path('signup/', views.signup, name="signup"),
+    path('v1/manage-urls/', views.manage_favorite_url, name="fav"),
     path('accounts/', include('django.contrib.auth.urls')),
     # path("accounts/login/", auth_views.LoginView.as_view(template_name="registration/login.html"), name="login"),
     path('change-password/', auth_views.PasswordChangeView.as_view(), name="password_reset"),

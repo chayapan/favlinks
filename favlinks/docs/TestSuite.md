@@ -21,6 +21,9 @@ UserAccountTestCase is the test class for user registration, login, password res
 
 Obtain JWT token. Use OAuth2.
 
+AppAuthenTestCase - test the authentication method
+ManageAccountTestCase - test the account management
+
 
 ### 3. Add Favorite URL
 

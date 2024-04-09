@@ -36,5 +36,6 @@ https://docs.djangoproject.com/en/5.0/topics/auth/default/#all-authentication-vi
     {# Assumes you set up the password_reset view in your URLconf #}
     <p>
         <a href="{% url 'password_reset' %}">Lost password?</a>
+        <a href="{% url 'signup' %}">Create new acount.</a>
     </p>
 {% endblock %}

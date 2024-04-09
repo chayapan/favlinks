@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import serializers
-from weblink.models import Category, Tag, Link
+from weblink.models import Category, Tag, Link, URL
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -22,12 +22,17 @@ class LinkSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Link
-        fields = ['id', 'title', 'category', 'updated_at', 'options']
+        fields = ['id', 'title', 'category', 'tags', 'updated_at', 'user', 'url_text', 'url_hash', 'options']
         lookup_field = 'id'
         extra_kwargs = {
             'url': {'lookup_field': 'id'}
         }
-    
+
+class URLSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = URL
+        fields = ['id','raw_url','updated_at', 'last_preview_capture']
+
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Category

@@ -12,7 +12,9 @@ def preview_url(link) -> Tuple[datetime, str, str]:
         status_code = req.status_code
         content = req.content[:50]
         print(timestamp, status_code, content)
-    except:
-        pass
+    except Exception as e:
+        print(e)
+        title = 'Error'
+        status_code = 500
     title = 'PAGE-TITLE'
     return timestamp, title, status_code

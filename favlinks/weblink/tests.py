@@ -16,19 +16,19 @@ class UserAccountTestCase(TestCase):
     - user login via API
     """
     def setUp(self):
-        user001 = User.objects.create_user(  username="johnw",
+        self.user001 = User.objects.create_user(  username="johnw",
                                         email="john.wick@example.com",
                                         password="changeme",
                                         first_name="John",
                                         last_name="Wick")
-        username = "john"
-        first_name = "John"
-        last_name = "Doe"
-        email = "john.doe@example.com"
-        user002 = User.objects.create(  username=username, 
-                                        email=email, 
-                                        first_name=first_name, 
-                                        last_name=last_name  )
+        self.username = "john"
+        self.first_name = "John"
+        self.last_name = "Doe"
+        self.email = "john.doe@example.com"
+        self.user002 = User.objects.create(  username=self.username, 
+                                        email=self.email, 
+                                        first_name=self.first_name, 
+                                        last_name=self.last_name  )
     
     def test_account_signup_(self):
         with self.assertRaises(User.DoesNotExist):
@@ -42,19 +42,38 @@ class UserAccountTestCase(TestCase):
         self.assertEqual(response.status_code, 200, 'Signup page should be available.')
 
         response = c.get('/accounts/login/')
-        self.assertEqual(response.status_code, 200, 'Login page should be available.')    
+        self.assertEqual(response.status_code, 200, 'Login page should be available.')
+          
     
     def test_user_signin_signout(self):
         """create user, signin, signout."""
         user003 = User.objects.create_user("test1","test1@example.com","simplePassword")
         c = Client()
         response = c.get('/')
-        self.assertEqual(response.status_code, 302, 'Landing page should be available. But if the user is not logged-in it redirects to the login form.')
-        
-
+        self.assertEqual(response.status_code, 302, 'Landing page should be available. But if the user is not logged-in it redirects to the login form.')    
+        c.login(username="test1", password="simplePassword")
+        response = c.get('/')
+        self.assertEquals(response.status_code, 200, "Login success. Landing page loads.")
     def tearDown(self) -> None:
         return super().tearDown()
 
+class AppAuthenTestCase(TestCase):
+    def test_login(self):
+        user01 = User.objects.create_user('user01','user01@example.com','password')
+        c = Client()
+        c.login(username="user01", password="password")
+        response = c.get('/')
+        self.assertEquals(response.status_code, 200, "Login success.")
+
+class ManageMyAccountTestCase(TestCase):
+    def test_create_my_account(self):
+        pass
+    def test_signin(self):
+        pass
+    def test_list_my_urls(self):
+        pass
+    def test_add_url_to_my_list(self):
+        pass
 
 class ApplicationModelClassesTest(TestCase):
     def test_user_model(self):
@@ -82,17 +101,19 @@ class ApplicationModelClassesTest(TestCase):
             tag = link1.add_tag(t) # the method returns Tag object
             tags.append(tag)
         self.assertEquals(len(tags), 4, "Create four tags for testing.")
-        tagged = [t.value for t in url1.tags.all()]
+        tagged = [t.value for t in link1.tags.all()]
         self.assertTrue(set(tag_list).issubset(tagged), "Tags are added, so they have subset relationship.")
+
+    def test_category_feature(self):
+        """Category feature. URL belongs to a category. When user creates a URL (make a favorite) he has to define which category the URL belongs to."""
+        cat1 = Category.objects.create(name='A')
+        cat2 = Category.objects.create(name='B')
+        URL
 
     def test_tag_feature(self):
         """Tagging function. User can tag URL with given tag. Tags are list of strings."""
         URL
         Tag
-    def test_category_feature(self):
-        """Category feature. URL belongs to a category. When user creates a URL (make a favorite) he has to define which category the URL belongs to."""
-        Category
-        URL
 
 class CategoryModelTest(TestCase):
     def test_create_category_object(self):
