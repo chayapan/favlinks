@@ -32,10 +32,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         cmd = options['subcommand'][0]
         if 'list' == cmd:
-            self.stdout.write("=PK=" + "\t=FAV-LINK====" + "\t\t===URL===")
+            self.stdout.write("=PK=" + "\t===URL===" + "\t\t=FAV-LINK====")
             q = Link.objects.all()
             for l in q:
-                self.stdout.write("%04d" % l.pk + "\t%s" % l + "\t%s" % l.url)
+                self.stdout.write("%04d" % l.pk + "\t%s" % l.url + "\t%s" % l)
         if 'delete' == cmd:
             link_ids = options['pks'].split(',')
             for id in link_ids:

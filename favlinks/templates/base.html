@@ -39,6 +39,15 @@ https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_templates_cv&stacked
           </div>
         </div>
       </div>
+      <!-- Alerts -->
+      {% if messages %}
+      <div class="w3-bottom w3-panel w3-green messages">
+          {% for message in messages %}
+          <h3>{{message.tags}}</h3>
+           <p>{{message}}</p>
+          {% endfor %}
+      </div>
+      {% endif %}
       <!-- Page Container -->
       <div class="w3-content w3-margin-top"
            style="max-width:1400px;

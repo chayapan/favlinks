@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import Group, User
 from django.contrib.auth import forms as auth_forms
+from django.contrib import messages
 from rest_framework import permissions, viewsets
 from weblink import serializers
 from weblink import forms as app_forms
@@ -12,10 +13,12 @@ def signup(request):
         signup_form = auth_forms.UserCreationForm(request.POST)
         if signup_form.is_valid():
             signup_form.save()
+            messages.add_message(request, messages.SUCCESS, "You've successfully sign up! Welcome to FavLinks :D")
             print("Saved. User created.")
             return redirect('login') # after account successfully create redirect to login page
         else:
-            print(signup_form.error_messages)
+            messages.add_message(request, messages.WARNING, "Sign-up request failed!")
+            print("User create failed.")
     context = {
         'signup_form': signup_form,
         'login_form': auth_forms.AuthenticationForm()

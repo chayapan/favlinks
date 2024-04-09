@@ -78,7 +78,7 @@ class Link(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     state = models.CharField(max_length=10)
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, related_name="links")
-    tags = models.ManyToManyField(Tag, null=True)
+    tags = models.ManyToManyField(Tag)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorite_links")
     url_text = models.CharField(max_length=250)
     url_hash = models.CharField(max_length=100, null=True)
