@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         """Arguments for this command: --delete"""
-        parser.add_argument("subcommand", type=str, choices=['list', 'new', 'delete'])
+        parser.add_argument("subcommand", type=str, choices=['list', 'add', 'delete'])
         parser.add_argument("--email", help="email")
         parser.add_argument("--username", help="username")
 
@@ -35,7 +35,7 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS('Manage User Accounts: %s\n' % cmd)
         )
-        if 'new' == cmd:
+        if 'add' == cmd:
             self.stdout.write("Creating new account")
             email, username = options['email'], options.get('username', '-')
             try:

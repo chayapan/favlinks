@@ -3,6 +3,9 @@ from django.contrib.auth.models import Group, User
 from django.contrib.auth import forms as auth_forms
 from django.contrib import messages
 from rest_framework import permissions, viewsets
+from rest_framework.response import Response 
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from weblink import serializers
 from weblink import forms as app_forms
 from weblink import models as app_models
@@ -16,14 +19,37 @@ def signup(request):
             messages.add_message(request, messages.SUCCESS, "You've successfully sign up! Welcome to FavLinks :D")
             print("Saved. User created.")
             return redirect('login') # after account successfully create redirect to login page
-        else:
-            messages.add_message(request, messages.WARNING, "Sign-up request failed!")
-            print("User create failed.")
+        err = ''.join(f'{k}: {"".join(e for e in signup_form.errors[k])}, ' for k in signup_form.errors)
+        messages.add_message(request, messages.WARNING, "Sign-up request failed! %s" % err)
+        print("User create failed.")
     context = {
         'signup_form': signup_form,
         'login_form': auth_forms.AuthenticationForm()
     }
     return render(request, template_name="registration/signup.html", context=context)
+
+# @authentication_classes((TokenAuthentication,))
+
+
+@api_view(['POST'])
+@permission_classes((AllowAny,))
+def create_user(request):
+    """
+    {"username":"user1","password":"pass1"}
+    """
+    print(request.data)
+    u = User.objects.create(username=request.data['username'], email=request.data['email'])
+    signup_form = auth_forms.UserCreationForm(request.POST)
+    if signup_form.is_valid():
+        signup_form.save()
+        print("Created")
+    else:
+        print(signup_form.error_messages)
+
+    serializer = serializers.UserSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
 
 def home(request):
     if not request.user.is_authenticated:

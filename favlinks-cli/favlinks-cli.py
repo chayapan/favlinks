@@ -6,14 +6,23 @@ import requests
 import os, sys, json
 PROG = 'FavLinks'
 AUTH_ENDPOINT = 'http://127.0.0.1:8000/api-token-auth/'
-LIST_ENDPOINT = 'http://127.0.0.1:8000/api/v1/users'
+INFO_ENDPOINT = 'http://127.0.0.1:8000/api/v1/users/{username}/'
 
 def show_info(args):
+    """Example:
+    curl -vv -X GET -H "Authorization: Token 03d1f9f2b57ac5eb85228448dc706e3ed11bcaf5" http://127.0.0.1:8000/api/v1/users/
+    """
     with shelve.open('favlinks.session') as session:
         if 'token' in session:
-            print(session['username'])
+            print("User: " + session['username'])
+            print("Token: " + session['token'])
         else:
             print("Not logged-in. Please login with 'login' first.")
+        headers = {"Authorization": f"Token {session['token']}"}
+        url = INFO_ENDPOINT.format(username=session['username'])
+        r = requests.get(url, headers=headers)
+        print("API: " + url)
+        print(r.content.decode('utf-8'))
 
 def register(args):
     """Register a new account."""
@@ -51,7 +60,7 @@ def login(args) -> bool:
     headers = {'Content-Type': 'application/json'}
     r = requests.post(AUTH_ENDPOINT,data=data,headers=headers)
     content = r.content
-    print(content)
+    print(content.decode('utf-8'))
     res = json.loads(content.decode('utf-8'))
     if r.status_code == 200:
         with shelve.open('favlinks.session') as session:

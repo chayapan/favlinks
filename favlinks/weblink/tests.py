@@ -1,6 +1,8 @@
 from io import StringIO
 from django.core.management import call_command
 from django.test import TestCase, Client
+from django.db.utils import IntegrityError
+from django.db.transaction import TransactionManagementError
 from django.contrib.auth.models import User, Group
 from weblink.models import URL, Category, Tag, Link
 
@@ -16,38 +18,36 @@ class UserAccountTestCase(TestCase):
     - user login via API
     """
     def setUp(self):
-        self.user001 = User.objects.create_user(  username="johnw",
-                                        email="john.wick@example.com",
-                                        password="changeme",
-                                        first_name="John",
-                                        last_name="Wick")
         self.username = "john"
         self.first_name = "John"
         self.last_name = "Doe"
         self.email = "john.doe@example.com"
-        self.user002 = User.objects.create(  username=self.username, 
-                                        email=self.email, 
-                                        first_name=self.first_name, 
-                                        last_name=self.last_name  )
+        self.user001 = User.objects.create_user(  username="john",
+                                        email="john.wick@example.com",
+                                        password="changeme",
+                                        first_name="John",
+                                        last_name="Wick")
+        self.user002 = User.objects.create_user("test1","test1@example.com","simplePassword")
+        self.user002.first_name = 'John'
+        self.user002.save()
+        # Two users in the system. Both of them has first name John.
     
     def test_account_signup_(self):
         with self.assertRaises(User.DoesNotExist):
-            user001 = User.objects.get(username="alice")
-        
+            user001 = User.objects.get(username="alice")    
         with self.assertRaises(User.MultipleObjectsReturned):
             user001 = User.objects.get(first_name="John")
-        
+        with self.assertRaisesRegex(IntegrityError, 'UNIQUE constraint'):
+            with self.assertRaisesRegex(TransactionManagementError, 'error occurred in the current transaction'):
+                user002 = User.objects.create(username=self.username, email=self.email, first_name=self.first_name, last_name=self.last_name)
         c = Client()
         response = c.get('/signup/')
         self.assertEqual(response.status_code, 200, 'Signup page should be available.')
-
         response = c.get('/accounts/login/')
         self.assertEqual(response.status_code, 200, 'Login page should be available.')
-          
-    
+              
     def test_user_signin_signout(self):
         """create user, signin, signout."""
-        user003 = User.objects.create_user("test1","test1@example.com","simplePassword")
         c = Client()
         response = c.get('/')
         self.assertEqual(response.status_code, 302, 'Landing page should be available. But if the user is not logged-in it redirects to the login form.')    
@@ -149,7 +149,7 @@ class AccountRegistrationCommandTest(TestCase):
     """
     def test_command_output(self):
         out = StringIO()
-        call_command("register", "list-all", stdout=out)
+        call_command("register", "list", stdout=out)
         self.assertIn('Manage User Accounts', out.getvalue())
 
 class MakeFavLinkCommandTest(TestCase):
@@ -163,4 +163,4 @@ class MakeFavLinkCommandTest(TestCase):
     def test_command_output(self):
         out = StringIO()
         call_command("link", "list", stdout=out)
-        self.assertIn('=PK=\t=FAV-LINK=', out.getvalue())
+        self.assertIn('=FAV-LINK=', out.getvalue())

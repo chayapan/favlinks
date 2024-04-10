@@ -13,6 +13,7 @@ markdown = "*"
 django-filter = "*"
 djlint = "*"
 pandas = "*"
+black = "*"
 
 [dev-packages]
 
