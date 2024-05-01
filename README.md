@@ -1,7 +1,7 @@
 # favlinks
 
-https://favlinks.et.r.appspot.com
-https://github.com/chayapan/favlinks
+* Demo: https://favlinks-demo.uc.r.appspot.com/signup/
+* Code https://github.com/chayapan/favlinks
 
 ## Develop
 
