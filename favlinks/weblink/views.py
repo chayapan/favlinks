@@ -44,12 +44,19 @@ def create_user(request):
         signup_form.save()
         print("Created")
     else:
-        print(signup_form.error_messages)
+        print(signup_form.error)
 
     serializer = serializers.UserSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
+
+def profile(request):
+    context = {
+        'viewer': request.user,
+        'is_member': request.user.is_authenticated
+    }
+    return render(request, template_name="profile.html", context=context)
 
 def home(request):
     if not request.user.is_authenticated:

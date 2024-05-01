@@ -21,6 +21,7 @@ router.register(r'favorited-urls', views.URLViewSet)
 
 urlpatterns = [
     path('', views.home, name="home"),
+    path('profile/', views.profile, name="profile"),
     path('signup/', views.signup, name="signup"),
     path('v1/signup/', views.create_user, name="signup_api"),
     path('v1/manage-urls/', views.manage_favorite_url, name="fav"),
