@@ -9,6 +9,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from weblink import serializers
 from weblink import forms as app_forms
 from weblink import models as app_models
+import logging
+
+logger = logging.getLogger(__name__)
 
 def signup(request):
     signup_form = auth_forms.UserCreationForm()
@@ -30,7 +33,6 @@ def signup(request):
 
 # @authentication_classes((TokenAuthentication,))
 
-
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def create_user(request):
@@ -51,7 +53,8 @@ def create_user(request):
         serializer.save()
     return Response(serializer.data)
 
-def profile(request):
+def profile(request, username=""):
+    logger.info(f"View public profile {username}")
     context = {
         'viewer': request.user,
         'is_member': request.user.is_authenticated

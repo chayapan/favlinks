@@ -131,6 +131,13 @@ class Link(models.Model):
     def __str__(self) -> str:
         return f'<Link:user={self.user.username}:url={self.url_text}>'
 
+def add_tag(url: str, v: str):
+    """Add a tag to a URL"""
+    pass 
+
+def remove_tag(url: str, v: str):
+    """Remove a tag from a URL"""
+    pass
 
 def make_favorite_link(url: str,  user:  User, category: str  = "", tags = []) -> Link:
     """Link is owned by User and belongs to Category

@@ -30,6 +30,17 @@ class Command(BaseCommand):
         parser.add_argument("--email", help="email")
         parser.add_argument("--username", help="username")
 
+    def list_users(self, options):
+        table_data = []
+        table_data.append(['ID','Username','email', 'link count'])
+        q = User.objects.all()
+        self.stdout.write("Listing all accounts")
+        for u in q:
+            row = [u.pk, u.username,  u.email, "link count"]
+            table_data.append(row)
+        for row in table_data:
+            self.stdout.write("{: >4} {: >10} {: >20} {: >10}".format(*row))
+        
     def handle(self, *args, **options):
         cmd = options["subcommand"]
         self.stdout.write(
@@ -56,8 +67,5 @@ class Command(BaseCommand):
             except Exception as e:
                 self.stdout.write(self.style.ERROR(str(e) + "\nusername=%s" % (username,)))
         elif 'list' == cmd:
-            self.stdout.write("Listing all accounts")
-            self.stdout.write("=PK=" + "\t=EMAIL=\t" + "\t=USERNAME=")
-            for u in User.objects.all():
-                self.stdout.write(" %03d" % u.pk + "\t%20s" % u.email + "\t%10s" % u.username)
+            self.list_users(options)
 
