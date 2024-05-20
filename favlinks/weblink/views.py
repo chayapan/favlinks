@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import Group, User
 from django.contrib.auth import forms as auth_forms
 from django.contrib import messages
+from django.urls import reverse
 from rest_framework import permissions, viewsets
 from rest_framework.response import Response 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -12,6 +13,20 @@ from weblink import models as app_models
 import logging
 
 logger = logging.getLogger(__name__)
+
+def profile(request, username=""):
+    user_exist = User.objects.filter(username=username).count() == 1
+    if not user_exist:
+        # FIXME: choose user randomly
+        u1 = User.objects.all().first()
+        return redirect(reverse('profile', kwargs={'username': u1.username}))
+    logger.info(f"View public profile {username}")
+    context = {
+        'viewer': request.user,
+        'is_member': request.user.is_authenticated,
+        'profile': User.objects.get(username=username)
+    }
+    return render(request, template_name="profile.html", context=context)
 
 def signup(request):
     signup_form = auth_forms.UserCreationForm()
@@ -53,18 +68,16 @@ def create_user(request):
         serializer.save()
     return Response(serializer.data)
 
-def profile(request, username=""):
-    logger.info(f"View public profile {username}")
-    context = {
-        'viewer': request.user,
-        'is_member': request.user.is_authenticated
-    }
-    return render(request, template_name="profile.html", context=context)
 
 def home(request):
     if not request.user.is_authenticated:
-        return redirect('signup')
-    
+        # return redirect('signup')
+        context = {
+            'categories': app_models.Category.objects.all(),
+            'recent_links': app_models.Link.objects.order_by('-updated_at').all()
+        }
+        return render(request, template_name="directory.html", context=context)
+        
     context = {
         'user_profile_form': app_forms.ProfileUpdateForm(instance=request.user),
         'add_link_form': app_forms.FavoriteLinkForm(),

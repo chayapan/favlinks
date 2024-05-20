@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="w3-row">
+
+<div class="w3-third">
+<h1>Categories</h1>
+
+<dl>
+{% for category in categories %}
+    <dt>{{category}}</dt>
+{% endfor %}
+</dl>
+</div>
+<div class="w3-third">
+    <h1>Recent Links</h1>
+    {% for link in recent_links %}
+    <dt>{{link}}</dt>
+    {% endfor %}
+</div>
+<div class="w3-third">
+<a href="{% url 'signup' %}">Sign Up</a>
+</div>
+
+</div>
+
+{% endblock %}
