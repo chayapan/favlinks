@@ -148,8 +148,9 @@ class AccountRegistrationCommandTest(TestCase):
     https://docs.djangoproject.com/en/5.0/topics/testing/tools/#topics-testing-management-commands
     """
     def test_command_output(self):
+        """Test  ./manage.py user list"""
         out = StringIO()
-        call_command("register", "list", stdout=out)
+        call_command("user", "list", stdout=out)
         self.assertIn('Manage User Accounts', out.getvalue())
 
 class MakeFavLinkCommandTest(TestCase):
