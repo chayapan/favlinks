@@ -106,7 +106,7 @@ parser.add_argument("-v", "--verbosity", help="increase output verbosity", actio
 group1 = parser.add_argument_group()
 group1.add_argument('subcommand', help='choose sub-command', type=str, nargs='*', choices=action_table.keys())
 group1.add_argument("-u", "--username", help="username for the account")
-group1.add_argument("-p", "--password", help="username for the account")
+group1.add_argument("-p", "--password", help="password for the account")
 
 parser.set_defaults(subcommand='info')
 
@@ -120,6 +120,7 @@ def main(args):
             action_table[cmd](args)
         else:
             parser.print_help()
+    sys.exit(0)
 
 if __name__ == '__main__':
     args = parser.parse_args()
