@@ -153,6 +153,11 @@ class AccountRegistrationCommandTest(TestCase):
         call_command("user", "list", stdout=out)
         self.assertIn('Manage User Accounts', out.getvalue())
 
+        # user add --username test1 --email test1@example.com
+        call_command("user", "add", stdout=out)
+        self.assertIn('Manage User Accounts', out.getvalue())
+        
+
 class MakeFavLinkCommandTest(TestCase):
     """Test the making a favorite link function with CLI.
 

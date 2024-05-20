@@ -36,11 +36,23 @@ class Command(BaseCommand):
         q = User.objects.all()
         self.stdout.write("Listing all accounts")
         for u in q:
-            row = [u.pk, u.username,  u.email, "link count"]
+            row = [u.pk, u.username,  u.email, u.favorite_links.count()]
             table_data.append(row)
         for row in table_data:
             self.stdout.write("{: >4} {: >10} {: >20} {: >10}".format(*row))
-        
+    def delete_user(self, options):
+        self.stdout.write("Deleting user account(s)")
+        username = options.get('username', None)
+        try:
+            q = User.objects.filter(username=username)
+            if q.count() == 0:
+                raise CommandError('User with username "%s" does not exist' % (username, ))
+            for u in q:
+                self.stdout.write("%02d" % u.pk + " "*6 + "%20s" % u.username + "... DELETED")
+                u.delete()
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(str(e) + "\nusername=%s" % (username,)))
+
     def handle(self, *args, **options):
         cmd = options["subcommand"]
         self.stdout.write(
@@ -55,17 +67,7 @@ class Command(BaseCommand):
             except Exception as e:
                 self.stdout.write(self.style.ERROR(str(e) + "\nemail=%s, username=%s" % (email, username)))
         elif 'delete' == cmd:
-            self.stdout.write("Deleting user account(s)")
-            username = options.get('username', None)
-            try:
-                q = User.objects.filter(username=username)
-                if q.count() == 0:
-                    raise CommandError('User with username "%s" does not exist' % (username, ))
-                for u in q:
-                    self.stdout.write("%02d" % u.pk + " "*6 + "%20s" % u.username + "... DELETED")
-                    u.delete()
-            except Exception as e:
-                self.stdout.write(self.style.ERROR(str(e) + "\nusername=%s" % (username,)))
+            self.delete_user(options)
         elif 'list' == cmd:
             self.list_users(options)
 
