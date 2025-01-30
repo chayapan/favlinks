@@ -92,7 +92,7 @@ class UserAccountTestCase(TestCase):
         # Login with user002's credential
         c.login(username="test1", password="simplePassword")
         response = c.get('/')
-        self.assertEquals(response.status_code, 200, "Login success. Landing page loads.")
+        self.assertEqual(response.status_code, 200, "Login success. Landing page loads.")
     def tearDown(self) -> None:
         return super().tearDown()
 
@@ -102,7 +102,7 @@ class AppAuthenTestCase(TestCase):
         c = Client()
         c.login(username="user01", password="password")
         response = c.get('/')
-        self.assertEquals(response.status_code, 200, "Login success.")
+        self.assertEqual(response.status_code, 200, "Login success.")
 
 class ManageMyAccountTestCase(TestCase):
     def test_create_my_account(self):
@@ -118,15 +118,15 @@ class ApplicationDataModelTest(TestCase):
     def test_user_model(self):
         g  = Group.objects.create(name='FreeTier')
         u = User.objects.create(username='user-1')
-        self.assertEquals(g.id, 1)
-        self.assertEquals(u.id, 1)
+        self.assertEqual(g.id, 1)
+        self.assertEqual(u.id, 1)
 
     def test_weblink_models(self):
         """
         This test cases examine URL object and relationships: 
             URL-category URL-tags User-URL."""
         u1 = User.objects.create(username='user-1')
-        self.assertEquals(u1.id, 1)
+        self.assertEqual(u1.id, 1)
         url_0 = 'https://www.example.com'
         url1 = URL.objects.create(raw_url=url_0)
         cat1 = Category.objects.create(name='TEST-LINK-1')
@@ -139,7 +139,7 @@ class ApplicationDataModelTest(TestCase):
             # add tag keyword to the link
             tag = link1.add_tag(t) # the method returns Tag object
             tags.append(tag)
-        self.assertEquals(len(tags), 4, "Create four tags for testing.")
+        self.assertEqual(len(tags), 4, "Create four tags for testing.")
         tagged = [t.value for t in link1.tags.all()]
         self.assertTrue(set(tag_list).issubset(tagged), "Tags are added, so they have subset relationship.")
 
@@ -166,7 +166,7 @@ class CategoryModelTest(TestCase):
         d = Category.objects.create(name=cat4)
         d.parent = c 
         d.save()
-        self.assertEquals(d.parent, c, "Test parent-child relationship in category tree.")
+        self.assertEqual(d.parent, c, "Test parent-child relationship in category tree.")
 
 
 class TagModelTest(TestCase):
@@ -176,5 +176,5 @@ class TagModelTest(TestCase):
         for t in tag_list:
             tag = Tag.objects.create(value=t)
             tags.append(tag)
-        self.assertEquals(len(tags), 4, "Create four tags for testing.")
+        self.assertEqual(len(tags), 4, "Create four tags for testing.")
 
