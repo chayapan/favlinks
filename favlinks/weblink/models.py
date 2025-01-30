@@ -5,25 +5,21 @@ Models:
     3. Category
     4. Tag
     5. User
+
+Relational mode:
+Link(url, preview_image)
+UserFavLink( Link, User )
+UserFavLinkTags( UserFavLink, tag)
+
+Many-to-many relationship
+    https://docs.djangoproject.com/en/5.0/topics/db/examples/many_to_many/
+
 """
 from django.db import models
 from django.contrib.auth.models import User
-from .preview import preview_url
+from .preview import get_link_title
 from hashlib import sha256
 import time
-
-def find_user(id=None, email=None):
-    """Returns user object by userId or registered email."""
-    try:
-        if id:
-            u = User.objects.get(pk=id)
-        elif email:
-            q = User.objects.filter(email=email)
-            u = q.first()
-        return u
-    except Exception as e:
-        raise Exception("Lookup account error: %s id=%s email=%s" % (e, id, email))
-    return None
 
 class Category(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -52,7 +48,6 @@ class Tag(models.Model):
 
 class URL(models.Model):
     """URL has many-to-many relationship with tag.
-    https://docs.djangoproject.com/en/5.0/topics/db/examples/many_to_many/
     """
     raw_url = models.CharField(max_length=2000, unique=True)
     last_preview_capture = models.DateTimeField("preview fetched", null=True)
@@ -105,15 +100,16 @@ class Link(models.Model):
         # Check transaction here..
         return tag
 
-    def update_preview(self):
+    def fetch_preview(self):
         """Get preview for the URL. 
         TODO: make proper functionality analysis for this. How do use job queue."""
         if not self.url.last_preview_capture:
-            timestamp, title, status_code = preview_url(link=self)
-            self.url.last_preview_capture = timestamp
-            self.title = title
-            self.url.save()
-            self.save()
+            timestamp, title, status_code = get_link_title(link=self)
+            if status_code == 200:
+                self.url.last_preview_capture = timestamp
+                self.title = title
+                self.url.save()
+                self.save()
 
     @classmethod 
     def set_favorite(cls, user: User, category: Category, url: str):
@@ -165,7 +161,24 @@ def make_favorite_link(url: str,  user:  User, category: str  = "", tags = []) -
                 link.add_tag(t)
             else:
                 link.add_tag(t.value)
-        link.update_preview()
+        link.fetch_preview()
         return link
     # link already exists in user's bookmark
     return q.first()
+
+
+def find_user(id=None, name=None, email=None):
+    """Returns user object by userId or registered email."""
+    try:
+        if id:
+            u = User.objects.get(pk=id) 
+        if name:
+            u = User.objects.get(username=name)           
+        if email:
+            q = User.objects.filter(email=email)
+            u = q.first()
+        return u
+    except Exception as e:
+        # raise Exception("Lookup account error: %s id=%s email=%s" % (e, id, email))
+        pass
+    return None
