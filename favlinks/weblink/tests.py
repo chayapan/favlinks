@@ -6,6 +6,7 @@ from django.db.transaction import TransactionManagementError
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login, alogin, logout
 from weblink.models import URL, Category, Tag, Link
+from weblink.models import find_user, make_favorite_link
 
 
 class AccountRegistrationCommandTest(TestCase):
@@ -35,6 +36,16 @@ class MakeFavLinkCommandTest(TestCase):
     Testing for command line.
     https://docs.djangoproject.com/en/5.0/topics/testing/tools/#topics-testing-management-commands
     """
+    def test_core_functions(self):
+        """core functions in models.py
+        - make_favorite_link
+        - find_user
+        """
+        output1 = make_favorite_link()
+        self.assertTrue(output1, 'Test make_favorite_link method.')
+        output2 = find_user()
+        self.assertTrue(output2, 'Test find_user method.')
+
     def test_command_output(self):
         out = StringIO()
         call_command("link", "list", stdout=out)

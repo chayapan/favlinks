@@ -1,18 +1,12 @@
 """
-Django 5.0 settings for favlinks project. See reference at
-https://docs.djangoproject.com/en/5.0/topics/settings/
-https://docs.djangoproject.com/en/5.0/ref/settings/
+settings for favlinks project.
 """
+
 import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-_!a%@bv+^c^%yj8l_n6(^3q23_itw)5q)bfmpox_ot%-w(+n@y"
 
@@ -20,9 +14,9 @@ SECRET_KEY = "django-insecure-_!a%@bv+^c^%yj8l_n6(^3q23_itw)5q)bfmpox_ot%-w(+n@y
 DEBUG = True
 
 ALLOWED_HOSTS = []
-if 'IS_APP_ENGINE' in os.environ and os.environ['IS_APP_ENGINE']:
+if "IS_APP_ENGINE" in os.environ and os.environ["IS_APP_ENGINE"]:
     DEBUG = False
-    ALLOWED_HOSTS += ['*']
+    ALLOWED_HOSTS += ["*"]
 
 # Application definition
 
@@ -53,7 +47,7 @@ ROOT_URLCONF = "favlinks.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, 'templates')],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -70,20 +64,12 @@ WSGI_APPLICATION = "favlinks.wsgi.application"
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
 
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     # {
     #     "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -102,9 +88,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
@@ -118,34 +101,21 @@ LOGGING = {
     "disable_existing_loggers": False,  # retain the default loggers
 }
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
 STATIC_URL = "static/"
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# See https://www.django-rest-framework.org/#installation
-# Review authen/token
-# https://www.django-rest-framework.org/api-guide/authentication/#with-django-admin
-# Use Django's standard `django.contrib.auth` permissions,
-# or allow read-only access for unauthenticated users.
-
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-       'rest_framework.authentication.TokenAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
 }
 
-LOGIN_REDIRECT_URL  = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
