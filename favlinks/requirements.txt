@@ -35,5 +35,5 @@ tomli==2.0.1; python_version < '3.11'
 tqdm==4.66.2; python_version >= '3.7'
 typing-extensions==4.11.0; python_version < '3.11'
 tzdata==2024.1; python_version >= '2'
-urllib3==2.2.1; python_version >= '3.8'
+urllib3==2.5.0; python_version >= '3.8'
 uwsgi==2.0.24
