@@ -3,7 +3,7 @@ cd app
 
 #  ./gradlew compileJava
 
-# 
+#
 # next test compile jar and run jar.
 
 
@@ -11,8 +11,4 @@ cd app
 
 # JAR
 # ./gradlew jar
-# java -jar  build/libs/rest-service-0.0.1-SNAPSHOT-plain.jar 
-
-
-# Fix me
-#  https://redmine.chayapan.com/projects/technology-stack/wiki/Spring_Boot/
+# java -jar  build/libs/rest-service-0.0.1-SNAPSHOT-plain.jar
