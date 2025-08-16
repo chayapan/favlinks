@@ -1,3 +1,4 @@
+![](logo_all.png)
 
 Make a logo for my app "FavLink" for a responsive website. The app let user manage their favorite links via the Internet. Ask me questions to help you design the logo.
 ChatGPT said:
@@ -28,26 +29,29 @@ Mood/Message = organized
 
 Make three options. Create concept sketch. Then when. I approve make the ready-to-use.
 
-![](logo_all.png)
 
 ## Background
 
-This project is at
-https://github.com/chayapan/favlinks-backend-django
+This project was at https://github.com/chayapan/favlinks-backend-django
 
+From a job interview task in April 2024.
 
 [15:49] Pop Panupong (Unverified)
 
 Coding Interview
 https://forms.gle/qWSaiSVvp5QEZC3o6
 5fs14d2564b251c
-[16:48] Pop Panupong (Unverified)
 
+[16:48] Pop Panupong (Unverified)
 
 Project: https://forms.gle/eHDD6SxkyH3n5a1b7
 5fs14d2564b251c
 
+Submit before T+7 23.59:59 BKK Time
+https://docs.google.com/forms/d/e/1FAIpQLSclNMIw-AAqTpm8kpgY3CopOKLExZq0Z0jKI4vyEDEewAFQ9Q/viewform
 
+
+## Notes 
 
 1. wsgi for Django
 https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/uwsgi/
@@ -61,9 +65,6 @@ https://docs.python.org/3/library/collections.html#collections.defaultdict
 4. nested list
 https://docs.python.org/3/tutorial/datastructures.html#nested-list-comprehensions
 
-
-Submit before T+7 23.59:59 BKK Time
-https://docs.google.com/forms/d/e/1FAIpQLSclNMIw-AAqTpm8kpgY3CopOKLExZq0Z0jKI4vyEDEewAFQ9Q/viewform
 
 
 
