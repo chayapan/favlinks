@@ -21,4 +21,4 @@ URL class represents the web URL. This object represent generic URLs on the web 
 Link class is the association between a user and the web link. This object also associate with category and tags.
 
 ER diagram of this model might look like the following:
-
+![ER diagram](schema.png)
