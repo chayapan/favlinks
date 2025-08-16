@@ -9,7 +9,11 @@ This let we try out whether a template fit our project.
 https://www.w3schools.com/w3css/tryw3css_templates_mail.htm
 https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_templates_mail&stacked=h
 - good for responsive.
+- Send Mail modal.
 
+- fn openMail
+- firstTab is openTab
+- click inbox openInbox.click
 
 ## Social Media
 
@@ -35,6 +39,31 @@ https://www.w3schools.com/w3css/tryw3css_templates_social.htm
 - use this logo.
 
 
+Top component:
+1. logo
+2. button with dropdown. Notice,
+3. avatar
+4. Navbar on small screens
+
+Page Container
++- The Grid
++-- Left Column
++---- Upcoming Events  <-- ask new user to register
++---- Profile          <-- logged-in user sees their profile
++--- Accordion         <-- hide
++---  Alert Box
++-- Middle Column
++---  Add link widget.  <-- new  
+            - remove John Doe, Jane Doe, Angie Jane
++--- Feeds from Analytics
++-- Right Column
++---  Interests    <-- becomes Tags
++---- Friend Reqeust
++---- ADS       <-- hide
++---- debugger  <-- hide
+
+Move interests to above Upcoming Events.
+
 ## Kitchen Sink  
 
 https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_templates_black&stacked=h
@@ -46,6 +75,21 @@ https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_templates_black&stac
 - /backend
 
 https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_templates_analytics&stacked=h
+
+- "Raleway", sans-serif
+
+Hierarchy:
++ Analytics
++- Top container
++-- Logo
++- Sidebar/menu & dashboard links
++- Overlay effect when opening sidebar on small screens
++- Main content:  w3-main
++-- Widgets horizons: x4
++-- Panel
++--- Regions  (map)
++--- Feeds
++- Footer
 
 ## Travel
 
