@@ -41,12 +41,12 @@ https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_templates_cv&stacked
       </div>
       <!-- Alerts -->
       {% if messages %}
-      <div class="w3-bottom w3-panel w3-green messages">
-          {% for message in messages %}
-          <h3>{{message.tags}}</h3>
-           <p>{{message}}</p>
-          {% endfor %}
-      </div>
+        <div class="w3-bottom w3-panel w3-yellow messages">
+            {% for message in messages %}
+            <h3>{{message.tags}}</h3>
+            <p>{{message}}</p>
+            {% endfor %}
+        </div>
       {% endif %}
       <!-- Page Container -->
       <div class="w3-content w3-margin-top"
@@ -59,13 +59,15 @@ https://www.w3schools.com/w3css/tryit.asp?filename=tryw3css_templates_cv&stacked
         </div>
         <!-- End Page Container -->
       </div>
-      <footer class="w3-container w3-black w3-center w3-margin-top">
+      <footer class="w3-bottom w3-container w3-black w3-center w3-margin-top">
         <p>
-          <a href="https://github.com/chayapan/favlinks"><i class="fa fa-github w3-hover-opacity"></i></a>
-          <a href="https://th.linkedin.com/in/chayapan-a-khannabha-56a9024"><i class="fa fa-linkedin w3-hover-opacity"></i></a>
           Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a>
           <a href="https://www.djangoproject.com/">Django</a>
           <a href="https://www.python.org/">Python</a>
+          <a href="https://cloud.google.com/run"><i class="fa fa-google w3-hover-opacity"></i></a>
+          <a href="https://github.com/chayapan/favlinks"><i class="fa fa-github w3-hover-opacity"></i></a>
+          <a href="https://th.linkedin.com/in/chayapan-a-khannabha-56a9024"><i class="fa fa-linkedin w3-hover-opacity"></i></a>
+          <a href="https://aws.amazon.com/free/"><i class="fa fa-amazon w3-hover-opacity"></i></a>
         </p>
       </footer>
     </body>

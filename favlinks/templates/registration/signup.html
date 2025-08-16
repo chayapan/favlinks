@@ -1,25 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
     <!-- Left Column -->
-    <div class="w3-twothird">
-        Create New Account
+    <div class="w3-twothird w3-border">
+        <h1>Registration</h1>
 
-        <form action="{% url 'signup' %}" method="post">
+        <form class="w3-container" action="{% url 'signup' %}" method="post">
             {% csrf_token %} 
-        <div class="w3-container">{{ signup_form.as_table }}</div>
-        <input type="submit" value="Sign up" />
-    </form>
+        <p>Create a new account</p>
+        <div class="w3-container">
+            {{ signup_form.as_div }}
+            <input class="w3-input w3-button w3-small w3-blue" type="submit" value="Sign up" />
+        </div>
+        </form>
 
     </div>
     <!-- Right Column -->
-    <div class="w3-third">
-        <form action="{% url 'login' %}" method="post">
+    <div class="w3-third w3-border">
+        <form class="w3-container" action="{% url 'login' %}" method="post">
             {% csrf_token %} 
-        Log-in using Existing Account
+        <p>Log-in using Existing Account</p>
         <div class="w3-container">
-            {{ login_form.as_table }}
+            {{ login_form.as_div }}
+            <input class="w3-input w3-button w3-small w3-blue" type="submit" value="Login" />
         </div>
-        <input type="submit" value="Login" />
         </form>
     </div>
 {% endblock %}

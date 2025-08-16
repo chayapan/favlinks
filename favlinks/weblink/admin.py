@@ -8,6 +8,12 @@ https://stackoverflow.com/questions/73931689/django-admin-and-inline-related-mod
 
 from django.contrib import admin
 from .models import Category, Tag, Link, URL
+from rest_framework.authtoken.admin import TokenAdmin
+
+# Add token 
+# https://www.django-rest-framework.org/api-guide/authentication/#with-django-admin
+TokenAdmin.raw_id_fields = ['user']
+
 
 admin.site.register(URL)
 admin.site.register(Tag)

@@ -3,16 +3,6 @@
     <!-- Left Column -->
     <div class="w3-twothird">
         <h1>Hello, <span class="small">{{user}}</span></h1> 
-        Create New Favorite URL
-
-        <form action="{% url 'fav' %}" method="post">
-            {% csrf_token %} 
-            <label for="team_name">Enter name: </label>
-              {{add_link_form}}
-              <input type="submit" value="Add URL" />
-          </form>
-
-        <hr>
         <h3>Favorite URLs</h3>
         <table>
             <tr>
@@ -39,18 +29,21 @@
     </div>
     <!-- Right Column -->
     <div class="w3-third">
-        <hr>
-        <form action="{% url 'logout' %}" method="post">
+        <form class="w3-border w3-container" action="{% url 'logout' %}" method="post">
             {% csrf_token %} 
-              <input type="submit" value="Logout" />
+              <input class="w3-input w3-button w3-round-large w3-red" type="submit" value="Logout" />
         </form>
-        Manage My Account
-        <div class="w3-container">
-            <form action="/" method="post">
-                {% csrf_token %}
-            {{user_profile_form}}
-            <input type="submit" value="Update" />
-            </form>
-        </div>
+        <form class="w3-border w3-container w3-input" action="{% url 'fav' %}" method="post">
+            Create New Favorite URL
+            {% csrf_token %} 
+            <input class="w3-input w3-button w3-round-large w3-green" type="submit" value="Add URL" />
+              {{add_link_form.as_table}}
+          </form>
+        <form class="w3-border w3-container" action="/" method="post">
+            Manage My Account
+            {% csrf_token %}
+            {{user_profile_form.as_ul}}
+            <input class="w3-input w3-button w3-green" type="submit" value="Update" />
+        </form>
     </div>
 {% endblock %}

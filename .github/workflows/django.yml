@@ -2,33 +2,32 @@ name: Django CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master", "test", "demo"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 4
+      max-parallel: 2
       matrix:
-        python-version: [3.11, 3.8]
+        python-version: [3.12, 3.9]
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
-      run: |
-        cd favlinks
-        python -m pip install --upgrade pip pipenv
-        pipenv --python=python3
-        pipenv install
-        pipenv graph
-    - name: Run Tests
-      run: |
-        cd favlinks
-        pipenv run python manage.py test
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Dependencies
+        run: |
+          cd favlinks
+          python -m pip install --upgrade pip pipenv
+          pipenv --python=python3
+          pipenv install
+          pipenv graph
+      - name: Run Tests
+        run: |
+          cd favlinks
+          pipenv run python manage.py test

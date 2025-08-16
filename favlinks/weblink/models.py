@@ -5,25 +5,21 @@ Models:
     3. Category
     4. Tag
     5. User
+
+Relational mode:
+Link(url, preview_image)
+UserFavLink( Link, User )
+UserFavLinkTags( UserFavLink, tag)
+
+Many-to-many relationship
+    https://docs.djangoproject.com/en/5.0/topics/db/examples/many_to_many/
+
 """
 from django.db import models
 from django.contrib.auth.models import User
-from .preview import preview_url
+from .preview import get_link_title
 from hashlib import sha256
 import time
-
-def find_user(id=None, email=None):
-    """Returns user object by userId or registered email."""
-    try:
-        if id:
-            u = User.objects.get(pk=id)
-        elif email:
-            q = User.objects.filter(email=email)
-            u = q.first()
-        return u
-    except Exception as e:
-        raise Exception("Lookup account error: %s id=%s email=%s" % (e, id, email))
-    return None
 
 class Category(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -52,7 +48,6 @@ class Tag(models.Model):
 
 class URL(models.Model):
     """URL has many-to-many relationship with tag.
-    https://docs.djangoproject.com/en/5.0/topics/db/examples/many_to_many/
     """
     raw_url = models.CharField(max_length=2000, unique=True)
     last_preview_capture = models.DateTimeField("preview fetched", null=True)
@@ -105,36 +100,44 @@ class Link(models.Model):
         # Check transaction here..
         return tag
 
-    def update_preview(self):
-        """Get preview for the URL. 
+    def fetch_preview(self):
+        """Get preview for the URL.
         TODO: make proper functionality analysis for this. How do use job queue."""
         if not self.url.last_preview_capture:
-            timestamp, title, status_code = preview_url(link=self)
-            self.url.last_preview_capture = timestamp
-            self.title = title
-            self.url.save()
-            self.save()
+            timestamp, title, status_code = get_link_title(link=self)
+            if status_code == 200:
+                self.url.last_preview_capture = timestamp
+                self.title = title
+                self.url.save()
+                self.save()
 
-    @classmethod 
+    @classmethod
     def set_favorite(cls, user: User, category: Category, url: str):
         the_url, created = URL.objects.get_or_create(raw_url=url)
         if created:
             # The field 'last_preview_capture' is null.
-            # put in a queue to fetch a preview. 
+            # put in a queue to fetch a preview.
             print("Created new URL instance")
             URL.add_to_crawler_queue(the_url)
         link_obj = cls(url_text=url, user=user, category=category, url=the_url)
         link_obj.save()
         # output some logs...
         return link_obj
-    
+
     def __str__(self) -> str:
         return f'<Link:user={self.user.username}:url={self.url_text}>'
 
+def add_tag(url: str, v: str):
+    """Add a tag to a URL"""
+    pass
+
+def remove_tag(url: str, v: str):
+    """Remove a tag from a URL"""
+    pass
 
 def make_favorite_link(url: str,  user:  User, category: str  = "", tags = []) -> Link:
     """Link is owned by User and belongs to Category
-    1. The URL is hashed and look up in the URL table. 
+    1. The URL is hashed and look up in the URL table.
     If there is existing, return 'url_already_exists' if not return 'new_url'.
     2. The URL hash is saved.
     3. Category is selected. Fetch from database.
@@ -142,23 +145,44 @@ def make_favorite_link(url: str,  user:  User, category: str  = "", tags = []) -
     5. Tags are created and assigned to the Link object.
     6. Return the Link object.
     """
+    # try:
     q = URL.objects.filter(raw_url=url)
     if q.count() == 0: # 'new_url'
         url_obj = URL.objects.create(raw_url=url)
     else:
         url_obj = URL.objects.get(raw_url=url)
-    c = Category.objects.get(name=category)
-    # create Link object
-    # check if link already favorited
-    q = Link.objects.filter(user=user, url_text=url)
+    # get Category object or create new
+    c, created = Category.objects.get_or_create(name=category)
+    # create Link object.
+    # check if link already favorited. if so fetch existing link instance.
+    q = Link.objects.filter(url_text=url, user=user)
     if q.count() == 0:
         link = Link.objects.create(url=url_obj, url_text=url, user=user, category=c)
+        # TODO: improve this for-loop
         for t  in tags:
+            # TODO: improve add_tag to allow args to have heterogenous type.
             if isinstance(t, str):
                 link.add_tag(t)
             else:
                 link.add_tag(t.value)
-        link.update_preview()
+        link.fetch_preview() # TODO put this in queue...
         return link
     # link already exists in user's bookmark
     return q.first()
+    # except Exception as e:
+    #     print(e) # Field 'id' expected a number but got ''
+
+def find_user(id=None, name=None, email=None):
+    """Returns user object by userId or registered email."""
+    try:
+        if id:
+            u = User.objects.get(pk=id)
+        if name:
+            u = User.objects.get(username=name)
+        if email:
+            q = User.objects.filter(email=email)
+            u = q.first()
+        return u
+    except Exception as e:
+        Exception("Account lookup error: %s id=%s email=%s" % (e, id, email))
+    return False

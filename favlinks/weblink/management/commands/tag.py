@@ -6,40 +6,47 @@ Admin command for Tag entities.
 Command: 
     tag
 Sub-command:
-    list-all
-
+    list
+    add     --tags TAG1 TAG2 TAG3
+    delete
 """
 
 from django.core.management.base import BaseCommand, CommandError
-from weblink.models import Tag
+from weblink.models import Tag, add_tag, remove_tag
 
 class Command(BaseCommand):
     help = "Manage link tags. List, add/create, remove."
 
     def add_arguments(self, parser):
-        """Arguments for this command: --delete"""
         parser.add_argument("subcommand", nargs="+", type=str, choices=['list','add','delete'])
         parser.add_argument("--tags", nargs="+", type=str)
         parser.add_argument("--pk", nargs="?", type=str)
 
+    def list_tags(self, options):
+        table_data = []
+        table_data.append(['PK','Tag'])
+        q = Tag.objects.all()
+        for t in q:
+            row = [t.pk, t.value]
+            table_data.append(row)    
+        for row in table_data:
+            self.stdout.write("{: >8} {: >20}".format(*row))
+   
     def handle(self, *args, **options):
         cmd = options['subcommand'][0]
         if 'list' == cmd:
-            self.stdout.write("=PK=" + "\t=TAG====")
-            q = Tag.objects.all()
-            for t in q:
-                self.stdout.write("%04d" % t.pk + "\t%s" % t.value)
+            self.list_tags(options)
         elif 'add' == cmd:
+            # two choices: either space-separate or comma separate. Comma separate would be better actually...
+            # ex. "['FOOD', 'TRAVEL', 'BLOG']"
             tags = options['tags']
             try:
-                # two choices: either space-separate or comma separate. Comma separate would be better actually...
-                # ex. "['FOOD', 'TRAVEL', 'BLOG']"
                 tag_list = eval(str(tags))  # TODO: check security req.
+                for v in tag_list:
+                    t = Tag.objects.create(value=v)
+                    self.stdout.write("%04d" % t.pk + "\t%s" % t.value)
             except Exception as e:
                 raise CommandError(e +  "%s" % tags)
-            for v in tag_list:
-                t = Tag.objects.create(value=v)
-                self.stdout.write("%04d" % t.pk + "\t%s" % t.value)
         elif 'delete' == cmd:
             if 'pk' in options:
                 pk_list = options['pk'].split(',')

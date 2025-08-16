@@ -2,10 +2,31 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import Group, User
 from django.contrib.auth import forms as auth_forms
 from django.contrib import messages
+from django.urls import reverse
 from rest_framework import permissions, viewsets
+from rest_framework.response import Response 
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from weblink import serializers
 from weblink import forms as app_forms
 from weblink import models as app_models
+import logging
+
+logger = logging.getLogger(__name__)
+
+def profile(request, username=""):
+    user_exist = User.objects.filter(username=username).count() == 1
+    if not user_exist:
+        # FIXME: choose user randomly
+        u1 = User.objects.all().first()
+        return redirect(reverse('profile', kwargs={'username': u1.username}))
+    logger.info(f"View public profile {username}")
+    context = {
+        'viewer': request.user,
+        'is_member': request.user.is_authenticated,
+        'profile': User.objects.get(username=username)
+    }
+    return render(request, template_name="profile.html", context=context)
 
 def signup(request):
     signup_form = auth_forms.UserCreationForm()
@@ -16,19 +37,47 @@ def signup(request):
             messages.add_message(request, messages.SUCCESS, "You've successfully sign up! Welcome to FavLinks :D")
             print("Saved. User created.")
             return redirect('login') # after account successfully create redirect to login page
-        else:
-            messages.add_message(request, messages.WARNING, "Sign-up request failed!")
-            print("User create failed.")
+        err = ''.join(f'{k}: {"".join(e for e in signup_form.errors[k])}, ' for k in signup_form.errors)
+        messages.add_message(request, messages.WARNING, "Sign-up request failed! %s" % err)
+        print("User create failed.")
     context = {
         'signup_form': signup_form,
         'login_form': auth_forms.AuthenticationForm()
     }
     return render(request, template_name="registration/signup.html", context=context)
 
+# @authentication_classes((TokenAuthentication,))
+
+@api_view(['POST'])
+@permission_classes((AllowAny,))
+def create_user(request):
+    """
+    {"username":"user1","password":"pass1"}
+    """
+    print(request.data)
+    u = User.objects.create(username=request.data['username'], email=request.data['email'])
+    signup_form = auth_forms.UserCreationForm(request.POST)
+    if signup_form.is_valid():
+        signup_form.save()
+        print("Created")
+    else:
+        print(signup_form.error)
+
+    serializer = serializers.UserSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
 def home(request):
     if not request.user.is_authenticated:
-        return redirect('signup')
-    
+        # return redirect('signup')
+        context = {
+            'categories': app_models.Category.objects.all(),
+            'recent_links': app_models.Link.objects.order_by('-updated_at').all()
+        }
+        return render(request, template_name="directory.html", context=context)
+        
     context = {
         'user_profile_form': app_forms.ProfileUpdateForm(instance=request.user),
         'add_link_form': app_forms.FavoriteLinkForm(),
@@ -55,6 +104,7 @@ def manage_favorite_url(request):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = serializers.Category.objects.all()
     serializer_class = serializers.CategorySerializer
+    lookup_field = 'name'
 
 class TagViewSet(viewsets.ModelViewSet):
     queryset = serializers.Tag.objects.all()
@@ -75,6 +125,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = serializers.UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'username'
 
 class GroupViewSet(viewsets.ModelViewSet):
     """

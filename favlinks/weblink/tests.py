@@ -1,10 +1,59 @@
 from io import StringIO
 from django.core.management import call_command
 from django.test import TestCase, Client
+from django.db.utils import IntegrityError
+from django.db.transaction import TransactionManagementError
 from django.contrib.auth.models import User, Group
-from weblink.models import URL, Category, Tag, Link
-
 from django.contrib.auth import authenticate, login, alogin, logout
+from weblink.models import URL, Category, Tag, Link
+from weblink.models import find_user, make_favorite_link
+
+
+class AccountRegistrationCommandTest(TestCase):
+    """Create account and test log-in.
+    manage.py register EMAIL --password secr3tVry
+
+    Testing for command line.
+    https://docs.djangoproject.com/en/5.0/topics/testing/tools/#topics-testing-management-commands
+    """
+    def test_command_output(self):
+        """Test  ./manage.py user list"""
+        out = StringIO()
+        call_command("user", "list", stdout=out)
+        self.assertIn('Manage User Accounts', out.getvalue())
+
+        # user add --username test1 --email test1@example.com
+        call_command("user", "register", "--username", "john", "--email", "u003@favlinks.local", stdout=out)
+        print(out.getvalue())
+        self.assertIn('Manage User Accounts', out.getvalue())
+
+
+class MakeFavLinkCommandTest(TestCase):
+    """Test the making a favorite link function with CLI.
+
+    manage.py link make-favorite EMAIL URL CATEGORY
+
+    Testing for command line.
+    https://docs.djangoproject.com/en/5.0/topics/testing/tools/#topics-testing-management-commands
+    """
+    def test_core_functions(self):
+        """core functions in models.py
+        - make_favorite_link
+        - find_user
+        """
+        user = User.objects.create(username="user1")
+        user, url = User.objects.first(), "https://www.google.co.th"
+        output1 = make_favorite_link(user=user,url=url)
+        self.assertTrue(output1, 'Test make_favorite_link method.')
+        # print(output1)
+        output2 = find_user(name="user1")
+        print(output2)
+        self.assertTrue(output2, 'Test find_user method.')
+
+    def test_command_output(self):
+        out = StringIO()
+        call_command("link", "list", stdout=out)
+        self.assertIn('=FAV-LINK=', out.getvalue())
 
 class UserAccountTestCase(TestCase):
     """
@@ -16,44 +65,49 @@ class UserAccountTestCase(TestCase):
     - user login via API
     """
     def setUp(self):
-        self.user001 = User.objects.create_user(  username="johnw",
-                                        email="john.wick@example.com",
-                                        password="changeme",
-                                        first_name="John",
-                                        last_name="Wick")
         self.username = "john"
         self.first_name = "John"
         self.last_name = "Doe"
         self.email = "john.doe@example.com"
-        self.user002 = User.objects.create(  username=self.username, 
-                                        email=self.email, 
-                                        first_name=self.first_name, 
-                                        last_name=self.last_name  )
-    
+        self.user001 = User.objects.create_user(  username="john",
+                                        email="john.wick@example.com",
+                                        password="changeme",
+                                        first_name="John",
+                                        last_name="Wick")
+        self.user002 = User.objects.create_user("test1","test1@example.com","simplePassword")
+        self.user002.first_name = 'John'
+        self.user002.save()
+
     def test_account_signup_(self):
+        # Alice hadn't sign up.
         with self.assertRaises(User.DoesNotExist):
             user001 = User.objects.get(username="alice")
-        
+        # Two users in the system. Both of them has first name John.
         with self.assertRaises(User.MultipleObjectsReturned):
             user001 = User.objects.get(first_name="John")
-        
+        # Try to create another user with username john fails.
+        with self.assertRaisesRegex(IntegrityError, 'UNIQUE constraint'):
+            with self.assertRaisesRegex(TransactionManagementError, 'error occurred in the current transaction'):
+                user002 = User.objects.create(username=self.username, email=self.email, first_name=self.first_name, last_name=self.last_name)
+        # Load Sign Up page
         c = Client()
         response = c.get('/signup/')
         self.assertEqual(response.status_code, 200, 'Signup page should be available.')
-
+        # Load Login page
         response = c.get('/accounts/login/')
         self.assertEqual(response.status_code, 200, 'Login page should be available.')
-          
-    
+
     def test_user_signin_signout(self):
         """create user, signin, signout."""
-        user003 = User.objects.create_user("test1","test1@example.com","simplePassword")
         c = Client()
         response = c.get('/')
-        self.assertEqual(response.status_code, 302, 'Landing page should be available. But if the user is not logged-in it redirects to the login form.')    
+        # see note how to check HTML render https://docs.djangoproject.com/en/5.1/topics/testing/tools/
+        self.assertContains(response, 'Sign Up', status_code=200) #  'Page has Sign Up form.'
+        self.assertEqual(response.status_code, 200, 'Landing page should be available. But if the user is not logged-in it redirects to the login form.')
+        # Login with user002's credential
         c.login(username="test1", password="simplePassword")
         response = c.get('/')
-        self.assertEquals(response.status_code, 200, "Login success. Landing page loads.")
+        self.assertEqual(response.status_code, 200, "Login success. Landing page loads.")
     def tearDown(self) -> None:
         return super().tearDown()
 
@@ -63,7 +117,7 @@ class AppAuthenTestCase(TestCase):
         c = Client()
         c.login(username="user01", password="password")
         response = c.get('/')
-        self.assertEquals(response.status_code, 200, "Login success.")
+        self.assertEqual(response.status_code, 200, "Login success.")
 
 class ManageMyAccountTestCase(TestCase):
     def test_create_my_account(self):
@@ -75,19 +129,19 @@ class ManageMyAccountTestCase(TestCase):
     def test_add_url_to_my_list(self):
         pass
 
-class ApplicationModelClassesTest(TestCase):
+class ApplicationDataModelTest(TestCase):
     def test_user_model(self):
         g  = Group.objects.create(name='FreeTier')
         u = User.objects.create(username='user-1')
-        self.assertEquals(g.id, 1)
-        self.assertEquals(u.id, 1)
+        self.assertEqual(g.id, 1)
+        self.assertEqual(u.id, 1)
 
     def test_weblink_models(self):
         """
-        This test cases examine URL object and relationships: 
+        This test cases examine URL object and relationships:
             URL-category URL-tags User-URL."""
         u1 = User.objects.create(username='user-1')
-        self.assertEquals(u1.id, 1)
+        self.assertEqual(u1.id, 1)
         url_0 = 'https://www.example.com'
         url1 = URL.objects.create(raw_url=url_0)
         cat1 = Category.objects.create(name='TEST-LINK-1')
@@ -100,7 +154,7 @@ class ApplicationModelClassesTest(TestCase):
             # add tag keyword to the link
             tag = link1.add_tag(t) # the method returns Tag object
             tags.append(tag)
-        self.assertEquals(len(tags), 4, "Create four tags for testing.")
+        self.assertEqual(len(tags), 4, "Create four tags for testing.")
         tagged = [t.value for t in link1.tags.all()]
         self.assertTrue(set(tag_list).issubset(tagged), "Tags are added, so they have subset relationship.")
 
@@ -125,9 +179,9 @@ class CategoryModelTest(TestCase):
         b = Category.objects.create(name=cat2)
         c = Category.objects.create(name=cat3)
         d = Category.objects.create(name=cat4)
-        d.parent = c 
+        d.parent = c
         d.save()
-        self.assertEquals(d.parent, c, "Test parent-child relationship in category tree.")
+        self.assertEqual(d.parent, c, "Test parent-child relationship in category tree.")
 
 
 class TagModelTest(TestCase):
@@ -137,30 +191,4 @@ class TagModelTest(TestCase):
         for t in tag_list:
             tag = Tag.objects.create(value=t)
             tags.append(tag)
-        self.assertEquals(len(tags), 4, "Create four tags for testing.")
-
-
-class AccountRegistrationCommandTest(TestCase):
-    """Create account and test log-in.
-    manage.py register EMAIL --password secr3tVry
-
-    Testing for command line.
-    https://docs.djangoproject.com/en/5.0/topics/testing/tools/#topics-testing-management-commands
-    """
-    def test_command_output(self):
-        out = StringIO()
-        call_command("register", "list-all", stdout=out)
-        self.assertIn('Manage User Accounts', out.getvalue())
-
-class MakeFavLinkCommandTest(TestCase):
-    """Test the making a favorite link function with CLI.
-
-    manage.py link make-favorite EMAIL URL CATEGORY
-
-    Testing for command line.
-    https://docs.djangoproject.com/en/5.0/topics/testing/tools/#topics-testing-management-commands
-    """
-    def test_command_output(self):
-        out = StringIO()
-        call_command("link", "list", stdout=out)
-        self.assertIn('=PK=\t=FAV-LINK=', out.getvalue())
+        self.assertEqual(len(tags), 4, "Create four tags for testing.")

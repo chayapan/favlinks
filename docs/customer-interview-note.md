@@ -43,7 +43,11 @@ https://www.django-rest-framework.org/
 The Web browsable API is a huge usability win for your developers.
 Authentication policies including packages for OAuth1a and OAuth2.
 Serialization that supports both ORM and non-ORM data sources.
+<<<<<<< HEAD
 Customizable all the way down - just use regular function-based views
+=======
+Customizable all the way down - just use regular function-based views 
+>>>>>>> master
 
 pip install djangorestframework
 pip install markdown       # Markdown support for the browsable API.
@@ -56,4 +60,8 @@ https://www.django-rest-framework.org/tutorial/quickstart/
 Could not resolve URL for hyperlinked relationship
 https://stackoverflow.com/questions/20550598/django-rest-framework-could-not-resolve-url-for-hyperlinked-relationship-using
 
+<<<<<<< HEAD
 https://stackoverflow.com/questions/71312665/you-may-have-failed-to-include-the-related-model-in-your-api-or-incorrectly-con
+=======
+https://stackoverflow.com/questions/71312665/you-may-have-failed-to-include-the-related-model-in-your-api-or-incorrectly-con
+>>>>>>> master
