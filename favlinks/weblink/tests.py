@@ -26,7 +26,7 @@ class AccountRegistrationCommandTest(TestCase):
         call_command("user", "register", "--username", "john", "--email", "u003@favlinks.local", stdout=out)
         print(out.getvalue())
         self.assertIn('Manage User Accounts', out.getvalue())
-        
+
 
 class MakeFavLinkCommandTest(TestCase):
     """Test the making a favorite link function with CLI.
@@ -41,9 +41,13 @@ class MakeFavLinkCommandTest(TestCase):
         - make_favorite_link
         - find_user
         """
-        output1 = make_favorite_link()
+        user = User.objects.create(username="user1")
+        user, url = User.objects.first(), "https://www.google.co.th"
+        output1 = make_favorite_link(user=user,url=url)
         self.assertTrue(output1, 'Test make_favorite_link method.')
-        output2 = find_user()
+        # print(output1)
+        output2 = find_user(name="user1")
+        print(output2)
         self.assertTrue(output2, 'Test find_user method.')
 
     def test_command_output(self):
@@ -73,15 +77,15 @@ class UserAccountTestCase(TestCase):
         self.user002 = User.objects.create_user("test1","test1@example.com","simplePassword")
         self.user002.first_name = 'John'
         self.user002.save()
-    
+
     def test_account_signup_(self):
         # Alice hadn't sign up.
         with self.assertRaises(User.DoesNotExist):
-            user001 = User.objects.get(username="alice")    
+            user001 = User.objects.get(username="alice")
         # Two users in the system. Both of them has first name John.
         with self.assertRaises(User.MultipleObjectsReturned):
             user001 = User.objects.get(first_name="John")
-        # Try to create another user with username john fails. 
+        # Try to create another user with username john fails.
         with self.assertRaisesRegex(IntegrityError, 'UNIQUE constraint'):
             with self.assertRaisesRegex(TransactionManagementError, 'error occurred in the current transaction'):
                 user002 = User.objects.create(username=self.username, email=self.email, first_name=self.first_name, last_name=self.last_name)
@@ -92,14 +96,14 @@ class UserAccountTestCase(TestCase):
         # Load Login page
         response = c.get('/accounts/login/')
         self.assertEqual(response.status_code, 200, 'Login page should be available.')
-              
+
     def test_user_signin_signout(self):
         """create user, signin, signout."""
         c = Client()
         response = c.get('/')
         # see note how to check HTML render https://docs.djangoproject.com/en/5.1/topics/testing/tools/
         self.assertContains(response, 'Sign Up', status_code=200) #  'Page has Sign Up form.'
-        self.assertEqual(response.status_code, 200, 'Landing page should be available. But if the user is not logged-in it redirects to the login form.')    
+        self.assertEqual(response.status_code, 200, 'Landing page should be available. But if the user is not logged-in it redirects to the login form.')
         # Login with user002's credential
         c.login(username="test1", password="simplePassword")
         response = c.get('/')
@@ -134,7 +138,7 @@ class ApplicationDataModelTest(TestCase):
 
     def test_weblink_models(self):
         """
-        This test cases examine URL object and relationships: 
+        This test cases examine URL object and relationships:
             URL-category URL-tags User-URL."""
         u1 = User.objects.create(username='user-1')
         self.assertEqual(u1.id, 1)
@@ -175,7 +179,7 @@ class CategoryModelTest(TestCase):
         b = Category.objects.create(name=cat2)
         c = Category.objects.create(name=cat3)
         d = Category.objects.create(name=cat4)
-        d.parent = c 
+        d.parent = c
         d.save()
         self.assertEqual(d.parent, c, "Test parent-child relationship in category tree.")
 
@@ -188,4 +192,3 @@ class TagModelTest(TestCase):
             tag = Tag.objects.create(value=t)
             tags.append(tag)
         self.assertEqual(len(tags), 4, "Create four tags for testing.")
-
