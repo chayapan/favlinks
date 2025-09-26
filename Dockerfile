@@ -2,29 +2,31 @@
 # Version: v0.1
 FROM python:3.10-slim
 
-# nslookup, dig
 USER root
-RUN apt-get update
-RUN apt-get install dnsutils --yes --fix-missing
+# Install required system packages in one layer
+# dnsutils: for nslookup, dig
+# uwsgi: optional for production serving
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#         dnsutils \
+#         uwsgi \
+#         curl \
+#     && rm -rf /var/lib/apt/lists/*
+
+
+
 RUN useradd zq1
 RUN mkdir -p /app/data /logs /home/zq1
 # Make data directory writable
 RUN chmod 777 /app/data /logs
 RUN chown -R zq1:zq1 /app /home/zq1 /logs
-# install app server
-RUN apt-get install uwsgi --yes
 
 # Switch to workspace account
 # The script aws is installed in '/home/tegan/.local/bin
 # Use pipenv to generate requirements.txt
 RUN pip3 install --upgrade pip
-RUN pip3 install pipenv gunicorn
-ADD ./Pipfile /app/Pipfile
+COPY ./favlinks/requirements.txt /tmp/requirements.txt
 WORKDIR /app
-RUN pipenv clean
-RUN pipenv lock
-RUN pipenv requirements > /requirements.txt
-RUN pip3 install -r /requirements.txt
+RUN pip3 install -r /tmp/requirements.txt
 
 RUN apt-get install -y curl
 USER zq1
