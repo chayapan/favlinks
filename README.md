@@ -3,6 +3,10 @@
 * Demo: https://favlinks-demo.uc.r.appspot.com/signup/
 * Code https://github.com/chayapan/favlinks
 
+## Design and Specification
+
+Read [docs/](docs/)
+
 ## Develop
 
 ```
@@ -18,7 +22,9 @@ Example configuration for
 * [Heroku](docs/HEROKU.md)
 * [Docker Compose](docs/DOCKER_COMPOSE.md)
 
+## Specification
 
-Dependency
-djangorestframework
-django-filter https://django-filter.readthedocs.io/en/stable/
+| Dependency | | URL |
+|---|---|---|
+| djangorestframework | REST Framework | |
+| django-filter | Search filter | https://django-filter.readthedocs.io/en/stable/ |
