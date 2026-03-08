@@ -4,7 +4,7 @@ from django.contrib.auth import forms as auth_forms
 from django.contrib import messages
 from django.urls import reverse
 from rest_framework import permissions, viewsets
-from rest_framework.response import Response 
+from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from weblink import serializers
@@ -77,7 +77,7 @@ def home(request):
             'recent_links': app_models.Link.objects.order_by('-updated_at').all()
         }
         return render(request, template_name="directory.html", context=context)
-        
+
     context = {
         'user_profile_form': app_forms.ProfileUpdateForm(instance=request.user),
         'add_link_form': app_forms.FavoriteLinkForm(),

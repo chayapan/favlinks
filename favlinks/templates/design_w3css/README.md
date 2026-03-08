@@ -102,3 +102,11 @@ https://www.w3schools.com/w3css/tryw3css_templates_travel2.htm#
 
 - tutorial
 https://www.w3schools.com/w3css/tryw3css_templates_app_launch.htm
+
+
+## Clothing Store
+
+Elements to use
+- category menu
+- footer has multi columns
+https://www.w3schools.com/w3css/tryw3css_templates_clothing_store.htm
